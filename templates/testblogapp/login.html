@@ -6,17 +6,17 @@
 <div class="jumbotron">
     <div class="container">
         <h1>Войдите в систему</h1>
-        <form action="/login" type="POST">
+        <form action="./../login/" method="POST">
             {% csrf_token %}
             <div class="form-group">
                 <label for="login">User name</label>
-                <input type="text" class="form-control" id="login" placeholder="John Doe"> 
+                <input type="text" class="form-control" name="login" placeholder="John Doe"> 
             </div>
             <div class="form-group">
                 <label for="pass">Password</label>
-                <input type="password" class="form-control" id="pass" placeholder="Yours password">
+                <input type="password" class="form-control" name="pass" placeholder="Yours password">
             </div>
-            <button type="submit" class="btn btn-default">Отправить</button>
+            <button type="submit" class="btn btn-default" value="Send">Отправить</button>
         </form>
     </div>
 </div>
