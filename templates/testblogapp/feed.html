@@ -1,0 +1,13 @@
+﻿{% extends "testblogapp/template.html" %}
+
+{% block title %}Лента{% endblock %}
+
+{%block urls %}
+    <li><a href="./../blog">Блог</a></li>
+    <li class="active"><a href="./../feed">Лента</a></li>
+    <li><a href="./../settings">Настройки</a></li>
+{% endblock %}
+
+{% block content %}
+        <p>Hello Feed</p>
+{% endblock %}

@@ -20,5 +20,6 @@ urlpatterns = [
     url(r'^blog/$', views.blog),
     url(r'^feed/$', views.feed),
     url(r'^settings/$', views.settings),
+    url(r'^login/$', views.login),
     url(r'^$', views.main),
 ]
