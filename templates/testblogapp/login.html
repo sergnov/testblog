@@ -1,0 +1,23 @@
+{% extends "testblogapp/template.html" %}
+
+{% block  title %}Вход в систему{% endblock %}
+
+{% block page %}
+<div class="jumbotron">
+    <div class="container">
+        <h1>Войдите в систему</h1>
+        <form action="/login" type="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="login">User name</label>
+                <input type="text" class="form-control" id="login" placeholder="John Doe"> 
+            </div>
+            <div class="form-group">
+                <label for="pass">Password</label>
+                <input type="password" class="form-control" id="pass" placeholder="Yours password">
+            </div>
+            <button type="submit" class="btn btn-default">Отправить</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
