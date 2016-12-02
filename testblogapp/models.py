@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from .helpers import worker
 
 class Post(models.Model):
     title = models.CharField(max_length=50)
@@ -9,6 +10,12 @@ class Post(models.Model):
     
     def __str__(self):
         return "t:{0.title} a:{0.author} tm:{0.append_time}".format(self)
+    
+    def save(self, *args, **kwargs):
+        super(Post, self).save(*args, **kwargs)
+        
+        subs = list(Subscribe.objects.filter(blog=self.author))
+        worker(subs, self)
     
 class Viewed(models.Model):
     class Meta:
