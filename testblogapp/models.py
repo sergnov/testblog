@@ -5,6 +5,7 @@ class Post(models.Model):
     title = models.CharField(max_length=50)
     text = models.TextField()
     author = models.ForeignKey(User)
+    append_time = models.DateTimeField(auto_now=True, editable=False)
     
 class Viewed(models.Model):
     user = models.ForeignKey(User)

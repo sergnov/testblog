@@ -4,9 +4,30 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 
+import logging
+
+from .models import Post, Subscribe
+from .helpers import worker
+
 @login_required(login_url="./../login")        
 def blog(request):
-    return render(request, "testblogapp/blog.html", {})
+    posts = Post.objects.order_by("append_time").reverse()[:10]
+    
+    if request.method=="GET":
+        return render(request, "testblogapp/blog.html", {"posts":posts})
+    else:
+        title = request.POST.get("title", None)
+        text = request.POST.get("body", None)
+        if None in (title, text) or len(title)==0 or len(text)==0:
+            return render(request, "testblogapp/blog.html", {"posts":posts, "message":"One or more field not filled"})
+        
+        post = Post.objects.create(title=title, text=text, author=request.user)
+        post.save()
+        
+        subscribers = Subscribe.objects.filter(blog__exact=request.user)
+        worker(subscribers, post)
+        
+        return redirect("./../blog")
     
 @login_required(login_url="./../login")        
 def feed(request):
@@ -49,3 +70,4 @@ def mlogin(request):
 def mlogout(request):
     logout(request)
     return redirect("../")
+    
