@@ -45,7 +45,7 @@ def mlogin(request):
     elif request.user.is_authenticated():
         return redirect("./../feed")
     else:
-        return render(request, "testblogapp/login.html", {})#{"next":request.GET.get("next", None)})
+        return render(request, "testblogapp/login.html", {"next":request.GET.get("next", None)})
         
 def mlogout(request):
     logout(request)
