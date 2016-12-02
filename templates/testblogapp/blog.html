@@ -1,1 +1,25 @@
 {% extends "testblogapp/template.html" %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <h1>Новый пост</h1>
+        <form action="./../blog/" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" name="title" placeholder="Your posts title"> 
+            </div>
+            <div class="form-group">
+                <label for="body">Text</label>
+                <textarea class="form-control" name="body" placeholder="Your posts text"></textarea>
+            </div>
+            <button type="submit" class="btn btn-default" value="Send">Отправить</button>
+        </form>
+    </div>
+</div>
+<div class="conatiner">
+    Older 
+</div>
+
+{% endblock %}
