@@ -31,7 +31,9 @@ def blog(request):
     
 @login_required(login_url="./../login")        
 def feed(request):
-    return render(request, "testblogapp/feed.html", {})
+    subscribes = list(Subscribe.objects.filter(user__exact=request.user).values("blog"))
+    posts = Post.objects.order_by("append_time").reverse().filter(author__in=subscribes)[:10]
+    return render(request, "testblogapp/feed.html", {"posts":posts})
         
 @login_required(login_url="./../login")        
 def settings(request):

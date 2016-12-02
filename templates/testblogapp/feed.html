@@ -9,5 +9,17 @@
 {% endblock %}
 
 {% block content %}
-        <p>Hello Feed</p>
+<div class="container">
+    {% for post in posts %}
+        <div class="row">
+            <div class="well">
+                <h4>{{post.title}} <small>{{post.append_time}}</small></h4>
+                <p class="text-justify">
+                    {{post.text}}
+                </p>
+                <footer>{{post.author}}</footer>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 {% endblock %}
