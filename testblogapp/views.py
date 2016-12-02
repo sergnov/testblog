@@ -70,7 +70,7 @@ def unsubscribe(request):
         for blog in blogs:
             Subscribe.objects.filter(user=request.user, blog=blog).delete()
             posts = list(Post.objects.filter(author=blog))
-            Viewed.objects.filter(user=request.user, post__in=posts)
+            Viewed.objects.filter(user=request.user, post__in=posts).delete()
         return redirect("./../settings")
     else:
         raise Http404
