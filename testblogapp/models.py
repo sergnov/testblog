@@ -7,6 +7,9 @@ class Post(models.Model):
     author = models.ForeignKey(User)
     append_time = models.DateTimeField(auto_now=True, editable=False)
     
+    def __str__(self):
+        return "t:{0.title} a:{0.author} tm:{0.append_time}".format(self)
+    
 class Viewed(models.Model):
     class Meta:
         unique_together = (("user", "post"),)
@@ -16,6 +19,9 @@ class Viewed(models.Model):
 class Subscribe(models.Model):
     class Meta:
         unique_together = (("user", "blog"),)
-
     user = models.ForeignKey(User, related_name="user")
     blog = models.ForeignKey(User, related_name="blog")
+    
+    def delete(self):
+        posts = list(Post.objects.filter(author=self.blog))
+        Viewed.objects.filter(user=self.user, post__in=posts).delete()

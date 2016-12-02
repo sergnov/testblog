@@ -65,7 +65,6 @@ def fulllength(request):
 @login_required(login_url="./../login")        
 def settings(request):
     subscribes = [ User.objects.get(pk__exact=val.blog.pk)  for val in Subscribe.objects.filter(user__exact=request.user).order_by("blog__username")]
-    # print([val for val in subscribes])
     
     user_subscribes = User.objects.filter (username__in = subscribes).order_by("username")
     no_subscribe    = User.objects.exclude(username__in = subscribes).order_by("username")
@@ -79,8 +78,8 @@ def unsubscribe(request):
         blogs = User.objects.filter(pk__in = ids)
         for blog in blogs:
             Subscribe.objects.filter(user=request.user, blog=blog).delete()
-            posts = list(Post.objects.filter(author=blog))
-            Viewed.objects.filter(user=request.user, post__in=posts).delete()
+            # posts = list(Post.objects.filter(author=blog))
+            # Viewed.objects.filter(user=request.user, post__in=posts).delete()
         return redirect("./../settings")
     else:
         raise Http404
@@ -93,7 +92,7 @@ def subscribe(request):
         print(blogs)
         for blog in blogs:
             sbs = Subscribe.objects.create(user=request.user, blog=blog)
-            print(sbs.user, sbs.blog)
+            logging.debug(sbs.user, sbs.blog)
         return redirect("./../settings")
     else:
         raise Http404
