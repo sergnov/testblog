@@ -33,16 +33,24 @@ def blog(request):
 @login_required(login_url="./../login")
 def feed(request):
     subscribes = [val[0] for val in list(Subscribe.objects.filter(user__exact=request.user).values_list("blog"))]
-    posts = list(Post.objects.order_by("-append_time").filter(author__id__in=subscribes)[:10])
+    read = [val[0] for val in list(Viewed.objects.filter(user__exact=request.user).values_list("post"))]
+    posts = Post.objects.order_by("-append_time").filter(author__id__in=subscribes).exclude(id__in=read)[:10]
+             
     return render(request, "testblogapp/feed.html", {"posts":posts})
     
 
 @login_required(login_url="./../login")
 def setread(request):
-    if request.method == "POST":
+    if request.method=="GET":
+        rd = request.GET.get("id", None)
+        if not rd:
+            return redirect("./../feed")
+        vwd, created = Viewed.objects.get_or_create(user = request.user, post = Post.objects.get(id__exact=rd))
+        
         return redirect("./../feed")
     else:
-        raise Http404 
+        raise Http404
+        
         
 @login_required(login_url="./../login")        
 def settings(request):

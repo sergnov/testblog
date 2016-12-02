@@ -8,6 +8,8 @@ class Post(models.Model):
     append_time = models.DateTimeField(auto_now=True, editable=False)
     
 class Viewed(models.Model):
+    class Meta:
+        unique_together = (("user", "post"),)
     user = models.ForeignKey(User)
     post = models.ForeignKey(Post)
     

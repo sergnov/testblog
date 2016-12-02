@@ -12,12 +12,15 @@
 <div class="container">
     {% for post in posts %}
         <div class="row">
-            <div class="well">
-                <h4>{{post.title}} <small>{{post.append_time}}</small></h4>
-                <p class="text-justify">
+            <div class="panel panel-default panel-info">
+                <div class="panel-heading"><h4>{{post.title}} <small>{{post.append_time}}</small></h4></div>
+                <div class="panel-body">
                     {{post.text}}
-                </p>
-                <footer>{{post.author}}</footer>
+                </div>
+                <div class="panel-footer">
+                    {{post.author}}
+                    <a href="./../setread?id={{post.id}}">Check read</a>
+                </div>
             </div>
         </div>
     {% endfor %}
