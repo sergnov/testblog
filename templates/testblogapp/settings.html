@@ -9,5 +9,44 @@
 {% endblock %}
 
 {% block content %}
-        <p>Hello Settings</p>
+<div class="container">
+    <div class="row">
+        <div class="well">
+            <h4>Вы подписаны:</h4>
+            <form action="./../unsubscribe/" method="POST">
+                {% csrf_token %}
+                {% for subs in user_subscribes %}
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <input type="checkbox" class="form-control" name="{{subs.pk}}" value="{{subs.pk}}"> 
+                        </span>
+                        <span class="input-group-addon">{{subs.username}}</span>
+                    </div>                
+                {% endfor %}
+                <button type="submit" class="btn btn-default" value="Send">Отписаться</button>
+            </form>
+        </div>
+        <div class="well">
+            <div class="row">
+                <div class="col-lg-2">
+                <h4>Вам предлагается:</h4>
+                <form action="./../subscribe/" method="POST">
+                    {% csrf_token %}
+                    {% for subs in no_user_subscribes %}
+                    
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <input type="checkbox" class="form-control" name="{{subs.pk}}" value="{{subs.pk}}"> 
+                            </span>
+                            <span class="input-group-addon">{{subs.username}}</span>
+                        </div>
+                    
+                    {% endfor %}
+                    <button type="submit" class="btn btn-default" value="Send">Подписаться</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

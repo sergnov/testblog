@@ -19,8 +19,11 @@ from . import views
 urlpatterns = [
     url(r'^blog/$', views.blog),
     url(r'^feed/$', views.feed),
+    url(r'^setread/$', views.setread),
     url(r'^settings/$', views.settings),
     url(r'^login', views.mlogin),
     url(r'^logout/$', views.mlogout),
+    url(r'^unsubscribe/$', views.unsubscribe),
+    url(r'^subscribe/$', views.subscribe),
     url(r'^$', views.main),
 ]

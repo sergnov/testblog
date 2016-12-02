@@ -1,17 +1,19 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login, logout
+from django.http import Http404
 from django.core.exceptions import PermissionDenied
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 import logging
 
-from .models import Post, Subscribe
+from .models import Post, Subscribe, Viewed
 from .helpers import worker
 
 @login_required(login_url="./../login")        
 def blog(request):
-    posts = Post.objects.order_by("append_time").reverse()[:10]
+    posts = Post.objects.filter(author=request.user).order_by("-append_time")[:10]
     
     if request.method=="GET":
         return render(request, "testblogapp/blog.html", {"posts":posts})
@@ -22,22 +24,59 @@ def blog(request):
             return render(request, "testblogapp/blog.html", {"posts":posts, "message":"One or more field not filled"})
         
         post = Post.objects.create(title=title, text=text, author=request.user)
-        post.save()
         
         subscribers = Subscribe.objects.filter(blog__exact=request.user)
         worker(subscribers, post)
         
         return redirect("./../blog")
     
-@login_required(login_url="./../login")        
+@login_required(login_url="./../login")
 def feed(request):
-    subscribes = list(Subscribe.objects.filter(user__exact=request.user).values("blog"))
-    posts = Post.objects.order_by("append_time").reverse().filter(author__in=subscribes)[:10]
+    subscribes = [val[0] for val in list(Subscribe.objects.filter(user__exact=request.user).values_list("blog"))]
+    posts = list(Post.objects.order_by("-append_time").filter(author__id__in=subscribes)[:10])
     return render(request, "testblogapp/feed.html", {"posts":posts})
+    
+
+@login_required(login_url="./../login")
+def setread(request):
+    if request.method == "POST":
+        return redirect("./../feed")
+    else:
+        raise Http404 
         
 @login_required(login_url="./../login")        
 def settings(request):
-    return render(request, "testblogapp/settings.html", {})
+    subscribes = [ User.objects.get(pk__exact=val.blog.pk)  for val in Subscribe.objects.filter(user__exact=request.user).order_by("blog__username")]
+    # print([val for val in subscribes])
+    
+    user_subscribes = User.objects.filter (username__in = subscribes).order_by("username")
+    no_subscribe    = User.objects.exclude(username__in = subscribes).order_by("username")
+    
+    return render(request, "testblogapp/settings.html", {"user_subscribes":user_subscribes, "no_user_subscribes": no_subscribe})
+    
+@login_required(login_url="./../login")        
+def unsubscribe(request):
+    if request.method == "POST":
+        ids = [int(id) for id in request.POST if id.isdigit()]
+        blogs = User.objects.filter(pk__in = ids)
+        for blog in blogs:
+            Subscribe.objects.filter(user=request.user, blog=blog).delete()
+        return redirect("./../settings")
+    else:
+        raise Http404
+    
+@login_required(login_url="./../login")        
+def subscribe(request):
+    if request.method == "POST":
+        ids = [int(id) for id in request.POST if id.isdigit()]
+        blogs = list(User.objects.filter(pk__in = ids))
+        print(blogs)
+        for blog in blogs:
+            sbs = Subscribe.objects.create(user=request.user, blog=blog)
+            print(sbs.user, sbs.blog)
+        return redirect("./../settings")
+    else:
+        raise Http404
     
 def main(request):
     return redirect("./feed")

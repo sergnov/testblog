@@ -12,5 +12,8 @@ class Viewed(models.Model):
     post = models.ForeignKey(Post)
     
 class Subscribe(models.Model):
+    class Meta:
+        unique_together = (("user", "blog"),)
+
     user = models.ForeignKey(User, related_name="user")
     blog = models.ForeignKey(User, related_name="blog")
