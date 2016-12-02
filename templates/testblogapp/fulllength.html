@@ -1,16 +1,15 @@
 ﻿{% extends "testblogapp/template.html" %}
 
-{% block title %}Лента{% endblock %}
+{% block title %}Пост{% endblock %}
 
 {%block urls %}
     <li><a href="./../blog">Блог</a></li>
-    <li class="active"><a href="./../feed">Лента</a></li>
+    <li><a href="./../feed">Лента</a></li>
     <li><a href="./../settings">Настройки</a></li>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    {% for post in posts %}
         <div class="row">
             <div class="panel panel-default">
                 <div class="panel-heading"><h4>{{post.title}} <small>{{post.append_time}}</small></h4></div>
@@ -21,11 +20,9 @@
                     <ul class="list-inline">
                         <li><p>Author: {{post.author}}</p></li>
                         <li><small><a href="./../setread?id={{post.id}}">Check read</a></small></li>
-                        <li><small><a href="./../fulllength?id={{post.id}}">Full Length</a></small></li>
                     </ul>
                 </div>
             </div>
         </div>
-    {% endfor %}
 </div>
 {% endblock %}

@@ -51,6 +51,16 @@ def setread(request):
     else:
         raise Http404
         
+@login_required(login_url="./../login")
+def fulllength(request):
+    if request.method=="GET":
+        rd = request.GET.get("id", None)
+        if not rd:
+            return redirect("./../feed")
+        post = Post.objects.get(pk__exact=rd)
+        return render(request, "testblogapp/fulllength.html", {"post":post})
+    else:
+        raise Http404
         
 @login_required(login_url="./../login")        
 def settings(request):
