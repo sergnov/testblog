@@ -17,8 +17,7 @@ def settings(request):
     return render(request, "testblogapp/settings.html", {})
     
 def main(request):
-    # return HttpResponse("Index")
-    return redirect("./login")
+    return redirect("./feed")
     
 def mlogin(request):
     if request.method == "POST":
