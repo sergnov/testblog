@@ -26,7 +26,7 @@ def blog(request):
         post = Post.objects.create(title=title, text=text, author=request.user)
         
         subscribers = Subscribe.objects.filter(blog__exact=request.user)
-        worker(subscribers, post)
+        # worker(subscribers, post)
         
         return redirect("./../blog")
     
