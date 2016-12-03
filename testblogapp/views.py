@@ -5,6 +5,8 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.views.generic import TemplateView
+from django.utils.decorators import method_decorator
 
 import logging
 
@@ -26,14 +28,26 @@ def blog(request):
         post = Post.objects.create(title=title, text=text, author=request.user)
         
         subscribers = Subscribe.objects.filter(blog__exact=request.user)
-        # worker(subscribers, post)
         
         return redirect("./../blog")
     
-@login_required(login_url="./../login")
-def feed(request):
-    posts = Post.objects.get_ten_unread(request.user)
-    return render(request, "testblogapp/feed.html", {"posts":posts})
+# @login_required(login_url="./../login")
+# def feed(request):
+    # posts = Post.objects.get_ten_unread(request.user)
+    # return render(request, "testblogapp/feed.html", {"posts":posts})
+    
+    
+class FeedView(TemplateView):
+    template_name = "testblogapp/feed.html"
+    
+    @method_decorator(login_required(login_url="./../login"))
+    def dispatch(self, request, *args, **kwargs):
+        return super(FeedView, self).dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super(FeedView, self).get_context_data(**kwargs)
+        context['posts'] = Post.objects.get_ten_unread(self.request.user)
+        return context
     
 
 @login_required(login_url="./../login")
@@ -75,8 +89,6 @@ def unsubscribe(request):
         blogs = User.objects.filter(pk__in = ids)
         for blog in blogs:
             Subscribe.objects.filter(user=request.user, blog=blog).delete()
-            # posts = list(Post.objects.filter(author=blog))
-            # Viewed.objects.filter(user=request.user, post__in=posts).delete()
         return redirect("./../settings")
     else:
         raise Http404

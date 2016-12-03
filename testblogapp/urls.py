@@ -18,7 +18,8 @@ from . import views
 
 urlpatterns = [
     url(r'^blog/$', views.blog),
-    url(r'^feed/$', views.feed),
+    # url(r'^feed/$', views.feed),
+    url(r'^feed/$', views.FeedView.as_view()),
     url(r'^setread', views.setread),
     url(r'^fulllength', views.fulllength),
     url(r'^settings/$', views.settings),
