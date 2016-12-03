@@ -1,10 +1,6 @@
 from django.core import mail
 
 def worker(subscribers, post, domain="127.0.0.1:8000"):
-    # print(dir(subscribers[0]))
-    
-        # print("Send email from",us.user, "to", us.blog)
-        
     with mail.get_connection() as connection:
         for us in subscribers:
             subject = "Post  added: "+post.title

@@ -32,10 +32,7 @@ def blog(request):
     
 @login_required(login_url="./../login")
 def feed(request):
-    subscribes = [val[0] for val in list(Subscribe.objects.filter(user__exact=request.user).values_list("blog"))]
-    read = [val[0] for val in list(Viewed.objects.filter(user__exact=request.user).values_list("post"))]
-    posts = Post.objects.order_by("-append_time").filter(author__id__in=subscribes).exclude(id__in=read)[:10]
-             
+    posts = Post.objects.get_ten_unread(request.user)
     return render(request, "testblogapp/feed.html", {"posts":posts})
     
 
