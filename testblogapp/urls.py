@@ -17,7 +17,8 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^blog/$', views.blog),
+    # url(r'^blog/$', views.blog),
+    url(r'^blog/$', views.BlogView.as_view()),
     # url(r'^feed/$', views.feed),
     url(r'^feed/$', views.FeedView.as_view()),
     url(r'^setread', views.setread),

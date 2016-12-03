@@ -12,30 +12,34 @@ import logging
 
 from .models import Post, Subscribe, Viewed
 from .helpers import worker
-
-@login_required(login_url="./../login")        
-def blog(request):
-    posts = Post.objects.filter(author=request.user).order_by("-append_time")[:10]
+       
+class BlogView(TemplateView):
+    template_name = "testblogapp/blog.html"
     
-    if request.method=="GET":
-        return render(request, "testblogapp/blog.html", {"posts":posts})
-    else:
-        title = request.POST.get("title", None)
-        text = request.POST.get("body", None)
+    @method_decorator(login_required(login_url="./../login"))
+    def dispatch(self, request, *args, **kwargs):
+        return super(BlogView, self).dispatch(request, *args, **kwargs)
+        
+    def get(self, request, **kwargs):
+        return self.render_to_response(self.get_context_data(), **kwargs)
+        
+    def post(self, request, **kwargs):
+        title = self.request.POST.get("title", None)
+        text = self.request.POST.get("body", None)
         if None in (title, text) or len(title)==0 or len(text)==0:
-            return render(request, "testblogapp/blog.html", {"posts":posts, "message":"One or more field not filled"})
+            context = self.get_context_data()
+            context['message'] = 'One or more field not filled'
+            return self.render_to_response(context, **kwargs)
         
-        post = Post.objects.create(title=title, text=text, author=request.user)
-        
-        subscribers = Subscribe.objects.filter(blog__exact=request.user)
+        post = Post.objects.create(title=title, text=text, author=self.request.user)
+        subscribers = Subscribe.objects.filter(blog__exact=self.request.user)
         
         return redirect("./../blog")
-    
-# @login_required(login_url="./../login")
-# def feed(request):
-    # posts = Post.objects.get_ten_unread(request.user)
-    # return render(request, "testblogapp/feed.html", {"posts":posts})
-    
+        
+    def get_context_data(self, **kwargs):
+        context = super(BlogView, self).get_context_data(**kwargs)
+        context['posts'] = Post.objects.filter(author=self.request.user)[:10]
+        return context
     
 class FeedView(TemplateView):
     template_name = "testblogapp/feed.html"
